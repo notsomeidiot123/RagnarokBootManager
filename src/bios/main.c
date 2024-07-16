@@ -1,0 +1,3 @@
+void bmain(){
+    for (;;);
+}
