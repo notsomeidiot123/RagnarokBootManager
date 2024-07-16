@@ -1,6 +1,6 @@
 # Ragnarok Boot Manager
 
-Simple x86 bootloader that boots a kernel from a filesystem
+Simple x86 bootloader that boots a kernel from a filesystem. Maybe could use a different name but my friend named it so I'm not going to change it
 
 ## Dependencies
 
