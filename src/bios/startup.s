@@ -1,10 +1,12 @@
 section .text
 
-bits 16
-
+bits 32
+extern bmain
 _start:
-    mov ax, 0xe41
-    int 0x10
+    
+    call bmain
     jmp $
 
 section .data
+
+test: dw 0x55aa

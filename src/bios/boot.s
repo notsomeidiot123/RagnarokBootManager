@@ -194,37 +194,66 @@ load_stage_2:
     mov ah, 0x42
     mov dx, [bootdisk]
     mov si, DAP
+    xor al, al
     int 0x13
     jc .testerr
     
-    jmp 0x1000:0000
+    ; push ds
+    cli
+    
+    lgdt [gdt_desc]
+    mov eax, cr0
+    or al, 1
+    mov cr0, eax
+    jmp 0x10:.pmode
+bits 32
+    .pmode:
+        mov bx, 0x18
+        mov ds, bx
+        mov es, bx
+        mov ss, bx
+        ; and al, 0xfe
+        ; mov cr0, eax
+        ; jmp 0x0:.unreal
+    .unreal:
+        ; pop ds
+        ; sti
+        ; mov bx, 0x0f01
+        ; mov eax, 0xb8000
+        ; mov [ds:eax], bx
+    jmp 0x10:0x10000
+    ;0x10000
     .testerr:
         mov ax, 0xe43
         int 0x10
     jmp $
 BMRG_DATA_STRUCT:
     
-default_gdtr:
-    dw 0
-    dd 0
 gdt_desc:
     .size: dw GDT_END - GDT_DATA - 1
     .offset: dd GDT_DATA
 GDT_DATA:
     NULL:
                     dq 0
+    UNREAL_CODE:
+        .lim:       dw 0xffff
+        .base_l:    dw 0x0000
+        .base_m:    db 0x00
+        .access:    db 0b1001_1010
+        .flags:     db 0b0000_0000
+        .base_h:    db 0x00
     CODE32:
         .lim:       dw 0xffff
         .base_l:    dw 0x00
         .base_m:    db 0x00
-        .access:    db 0b1001_0010
+        .access:    db 0b1001_1010
         .flags:     db 0b1100_1111
         .base_h:    db 0x00
     DATA32:
         .lim:       dw 0xffff
         .base_l:    dw 0x00
         .base_m:    db 0x00
-        .access:    db 0b1001_1010
+        .access:    db 0b1001_0010
         .flags:     db 0b1100_1111
         .base_h:    db 0x00
 GDT_END:
